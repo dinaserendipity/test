@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import photo from "./my-photo.jpg";
 
 const user = {
@@ -9,11 +9,23 @@ const user = {
 
 function MyApp() {
   const [showMessage, setShowMessage] = useState(false);
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(() => {
+    const saved = localStorage.getItem("count");
+    return saved ? Number(saved) : 0;
+  });
   const [userName, setUserName] = useState("");
   const [userSurname, setUserSurname] = useState("");
 
   const hour = new Date().getHours();
+
+  useEffect(() => {
+    localStorage.setItem("count", JSON.stringify(count));
+    console.log(count);
+  }, [count]);
+
+  const countLikes = () => {
+    setCount(count + 1);
+  };
 
   let timeGreeting;
   if (hour < 12) {
@@ -93,7 +105,7 @@ function MyApp() {
           </button>
 
           <button
-            onClick={() => setCount(count + 1)}
+            onClick={countLikes}
             className="text-[#1a1a1a] border border-amber-50 px-6 py-2.5 rounded-full text-[0.95rem]"
           >
             Лайк {count}
